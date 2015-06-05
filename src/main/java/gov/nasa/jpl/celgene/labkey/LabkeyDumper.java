@@ -43,7 +43,7 @@ public class LabkeyDumper {
 
 	}
 
-	public void generateJSON(List<Map<String, Object>> studyData) {
+	public static void generateJSON(List<Map<String, Object>> studyData) {
 
 		// loop over the returned rows
 		System.out.println("{\"studies\":[");
@@ -77,7 +77,6 @@ public class LabkeyDumper {
 		// create a SelectRowsCommand to call the selectRows.api
 		SelectRowsCommand cmd = new SelectRowsCommand("study", "Study");
 		cmd.setContainerFilter(ContainerFilter.CurrentAndSubfolders);
-
 		// execute the command against the connection
 		// within the Api Test project folder
 		SelectRowsResponse resp = cmd.execute(this.connection, projectName);

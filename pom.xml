@@ -21,7 +21,7 @@
                 <archive>
                   <manifest>
                     <addClasspath>true</addClasspath>
-                    <mainClass>gov.nasa.jpl.celgene.labkey.LabkeyDumper</mainClass>
+                    <mainClass>gov.nasa.jpl.celgene.kafka.LabkeyKafkaProducer</mainClass>
                   </manifest>
                 </archive>
             </configuration>

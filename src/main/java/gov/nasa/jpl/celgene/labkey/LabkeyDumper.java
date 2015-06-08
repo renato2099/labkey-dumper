@@ -115,7 +115,7 @@ public class LabkeyDumper {
 		dumper.generateJSON(dumper.dumpStudies(projectName));
 	}
 
-	private static boolean isEmpty(String string) {
+	public static boolean isEmpty(String string) {
 		return string == null || (string != null && string.equals(""));
 	}
 }

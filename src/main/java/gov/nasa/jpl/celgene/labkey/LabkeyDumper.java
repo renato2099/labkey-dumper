@@ -19,12 +19,12 @@ package gov.nasa.jpl.celgene.labkey;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
 import org.labkey.remoteapi.query.ContainerFilter;
-import org.labkey.remoteapi.query.ExecuteSqlCommand;
 import org.labkey.remoteapi.query.SelectRowsCommand;
 import org.labkey.remoteapi.query.SelectRowsResponse;
 
@@ -36,7 +36,6 @@ public class LabkeyDumper {
 
 	private URL labkeyUrl;
 
-    /** Constructor */
 	public LabkeyDumper(URL labkeyUrl, String username, String password) {
 		this.connection = new Connection(labkeyUrl.toString(), username,
 				password);
@@ -44,7 +43,7 @@ public class LabkeyDumper {
 
 	}
 
-	public static void generateJSON(List<Map<String, Object>> studyData) {
+	public void generateJSON(List<Map<String, Object>> studyData) {
 
 		// loop over the returned rows
 		System.out.println("{\"studies\":[");
@@ -53,15 +52,15 @@ public class LabkeyDumper {
 			System.out.println("{");
 			String [] keySet = study.keySet().toArray(new String[]{});
 			for (int j=0; j < keySet.length; j++){
-			    String key = keySet[j];
-			    if (j+1 >= keySet.length){
+				String key = keySet[j];
+				if (j+1 >= keySet.length){
 					System.out.println("\"" + key + "\" : \"" + StringEscapeUtils.escapeJson(String.valueOf(study.get(key)))
-							+ "\"");			    	
-			    }
-			    else{
+							+ "\"");
+				}
+				else{
 					System.out.println("\"" + key + "\" : \"" + StringEscapeUtils.escapeJson(String.valueOf(study.get(key)))
-							+ "\",");			    	
-			    }
+							+ "\",");
+				}
 			}
 			if (i+1 >= studyData.size()){
 				System.out.println("}");
@@ -76,16 +75,13 @@ public class LabkeyDumper {
 	public List<Map<String, Object>> dumpStudies(String projectName) throws IOException,
 			CommandException {
 		// create a SelectRowsCommand to call the selectRows.api
-		//SelectRowsCommand cmd = new SelectRowsCommand("study", "Study");
-        ExecuteSqlCommand cmd = new ExecuteSqlCommand("study");
-        cmd.setSql("SELECT * FROM study.Study");
-        SelectRowsResponse resp = cmd.execute(this.connection, "");
-        System.out.println(resp.getRows());
-		//cmd.setContainerFilter(ContainerFilter.AllFolders);
+		SelectRowsCommand cmd = new SelectRowsCommand("study", "Study");
+		cmd.setContainerFilter(ContainerFilter.CurrentAndSubfolders);
+
 		// execute the command against the connection
 		// within the Api Test project folder
-		//SelectRowsResponse resp = cmd.execute(this.connection, "");
-		//System.err.println(resp.getRowCount() + " rows were returned.");
+		SelectRowsResponse resp = cmd.execute(this.connection, projectName);
+		System.err.println(resp.getRowCount() + " rows were returned.");
 		return resp.getRows();
 	}
 
@@ -119,7 +115,7 @@ public class LabkeyDumper {
 		dumper.generateJSON(dumper.dumpStudies(projectName));
 	}
 
-	public static boolean isEmpty(String string) {
+	private static boolean isEmpty(String string) {
 		return string == null || (string != null && string.equals(""));
 	}
 }

@@ -23,6 +23,7 @@ import java.util.*;
 
 import gov.nasa.jpl.celgene.labkey.LabkeyDumper;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.labkey.remoteapi.CommandException;
@@ -279,9 +280,10 @@ public class LabkeyKafkaProducer {
         String[] keySet = study.keySet().toArray(new String[]{});
         for (int j = 0; j < keySet.length; j++) {
             String key = keySet[j];
-            if (j + 1 >= keySet.length) {
+            if (key.startsWith("_"))
                 jsonObj.put(key, StringEscapeUtils.escapeJson(String.valueOf(study.get(key))));
-            } else {
+            else {
+                key = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(key),"_");
                 jsonObj.put(key, StringEscapeUtils.escapeJson(String.valueOf(study.get(key))));
             }
         }
